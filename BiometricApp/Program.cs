@@ -17,20 +17,27 @@ namespace BiometricApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            //Console.WriteLine(args[0] + " " + args[1]);
             if (args.Length > 0)
             {
-                if (args[0] == "Register") 
+                string value1 = args[0].Split('%')[0];
+
+                string value2 = args[1].Split('/')[0];
+                if (value1 == "1") 
                 {
-                    Application.Run(new registerUser(int.Parse(args[1])));
+                    Application.Run(new registerUser(int.Parse(value2)));
                 }
-                else if (args[0] == "Verify")
+                else if (value1 == "2")
                 {
-                    Application.Run(new frmDBVerify(int.Parse(args[1])));
+                    Application.Run(new frmDBVerify(int.Parse(value2)));
                 }
             }
             else
             {
-                Application.Run(new Form_Main());
+                Form form = new registerUser();
+                Application.Run(form);
+
             }
 
         }

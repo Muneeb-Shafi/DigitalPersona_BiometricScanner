@@ -125,6 +125,14 @@ C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\obj
 C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\obj\Debug\BiometricApp.registerUser.resources
 C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\obj\Debug\BiometricApp.csproj.GenerateResource.cache
 C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\obj\Debug\BiometricApp.csproj.CoreCompileInputs.cache
-C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\obj\Debug\BiometricApp.csproj.CopyComplete
 C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\obj\Debug\BiometricApp.exe
 C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\obj\Debug\BiometricApp.pdb
+C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\obj\Debug\Biometri.139B0FD5.Up2Date
+C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\bin\Debug\BiometricApp.exe.manifest
+C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\bin\Debug\BiometricApp.application
+C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\obj\Debug\BiometricApp.TrustInfo.xml
+C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\obj\Debug\BiometricApp.exe.manifest
+C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\obj\Debug\BiometricApp.application
+C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\bin\Debug\websocket-sharp.dll
+C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\bin\Debug\websocket-sharp.xml
+C:\Users\ADMIN\Documents\GitHub\DigitalPersona_BiometricScanner\BiometricApp\bin\Debug\Fleck.dll

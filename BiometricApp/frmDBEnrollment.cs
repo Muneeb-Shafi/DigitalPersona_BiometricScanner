@@ -8,12 +8,16 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UareUSampleCSharp;
+using System.Net.Http;
+using Org.BouncyCastle.Asn1.Ocsp;
+using System.Runtime.InteropServices;
 
 namespace BiometricApp
 {
@@ -21,6 +25,12 @@ namespace BiometricApp
     {
         public int enrollementId;
         public string type;
+        int count;
+        private const int PROBABILITY_ONE = 0x7fffffff;
+        private Fmd firstFinger;
+        DataResult<Fmd> resultEnrollment;
+        List<Fmd> preenrollmentFmds;
+
 
         public frmDBEnrollment()
         {
@@ -34,6 +44,7 @@ namespace BiometricApp
             InitializeComponent();
             this.doneButton.Enabled = false;
             this.lblPlaceFinger.Text = "Place "+ftype+" on the scanner";
+            count = 0;
 
         }
         /// <summary>
@@ -66,6 +77,7 @@ namespace BiometricApp
         private delegate void SendMessageCallback(Action state, object payload);
         private void SendMessage(Action action, object payload)
         {
+            if (count > 4) { return; }
             try
             {
                 if (this.pbFingerprint.InvokeRequired)
@@ -311,14 +323,12 @@ namespace BiometricApp
                 return true;
             }
         }
-        private const int PROBABILITY_ONE = 0x7fffffff;
-        private Fmd firstFinger;
-        int count = 0;
-        DataResult<Fmd> resultEnrollment;
-        List<Fmd> preenrollmentFmds;
+
 
         public void OnCaptured(CaptureResult captureResult)
         {
+            if(count == 4) { return; }
+
             try
             {
                 if (!CheckCaptureResult(captureResult)) return;
@@ -333,8 +343,9 @@ namespace BiometricApp
                     count++;
                     DataResult<Fmd> resultConversion = FeatureExtraction.CreateFmdFromFid(captureResult.Data, Constants.Formats.Fmd.ANSI);
 
-                    MessageBox.Show("A finger was captured.  \r\nCount:  " + (count));
 
+                    Invoke((MethodInvoker)delegate { label2.Text = count.ToString(); });
+                    Invoke((MethodInvoker)delegate { label3.Text = (4 - count).ToString(); });                
                     if (resultConversion.ResultCode != Constants.ResultCode.DP_SUCCESS)
                     {
                         Reset = true;
@@ -343,14 +354,13 @@ namespace BiometricApp
 
                     preenrollmentFmds.Add(resultConversion.Data);
 
-                    if (count >= 4)
+                    if (count == 4)
                     {
                         resultEnrollment = DPUruNet.Enrollment.CreateEnrollmentFmd(Constants.Formats.Fmd.ANSI, preenrollmentFmds);
 
                         if (resultEnrollment.ResultCode == Constants.ResultCode.DP_SUCCESS)
                         {
                             preenrollmentFmds.Clear();
-                            count = 0;
                             saveToDB();
                             doneButton.Invoke((MethodInvoker)delegate
                             {
@@ -362,11 +372,9 @@ namespace BiometricApp
                         {
                             SendMessage(Action.SendMessage, "Enrollment was unsuccessful.  Please try again.");
                             preenrollmentFmds.Clear();
-                            count = 0;
                             return;
                         }
                     }
-                    MessageBox.Show("Scan the Same Finger " + (4-count) +" more times again");
                 }
                 catch (Exception ex)
                 {
@@ -410,18 +418,19 @@ namespace BiometricApp
         }
 
 
-        public void saveToDB()
+        public async void saveToDB()
         {
             Console.WriteLine("In Database Function");
             if (resultEnrollment != null)
             {
                 try
                 {
-                    using (MySqlConnection conn = new MySqlConnection("server=127.0.0.1;user=root;database=wapda_3.0metric;port=3306;password="))
+                    using (MySqlConnection conn = new MySqlConnection("server=127.0.0.1;user=root;database=wapda_3.0;port=3306;password="))
                     {
                         conn.Open();
 
-                        string sql = "INSERT INTO person_fingers (person_id, type, code, created_at, updated_at) VALUES (@v1, @v2, @v3, @v5, @v6)";
+                        //string sql = "INSERT INTO person_fingers (person_id, type, code, created_at, updated_at) VALUES (@v1, @v2, @v3, @v5, @v6)";
+                        string sql = "INSERT INTO person_identifications (person_id, type, code, created_at, updated_at) VALUES (@v1, @v2, @v3, @v5, @v6)";
 
                         using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                         {
@@ -441,13 +450,70 @@ namespace BiometricApp
                     MessageBox.Show("Error While Inserting Data in Database Error: " + ex.Message);
                 }
             }
+            Console.WriteLine(type);
+            try
+            {
 
-           
+                Image image = pbFingerprint.Image;
+                string imageData = null;
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    var raw = image.RawFormat;
+                    image.Save(memoryStream, ImageFormat.Png);
+                    byte[] imageBytes = memoryStream.ToArray();
+                    imageData = Convert.ToBase64String(imageBytes);
+                }
+                string fileName = $"{enrollementId}_{type}";
+
+                try
+                {
+                    using (var httpClient = new HttpClient())
+                    {
+                        using (var formData = new MultipartFormDataContent())
+                        {
+                            formData.Add(new StringContent(imageData), "image");
+                            formData.Add(new StringContent(fileName), "filename");
+                            formData.Add(new StringContent(type), "type");
+                            formData.Add(new StringContent($"{enrollementId}"), "hr_id");
+                            var response = await httpClient.PostAsync("http://wapda.test/save-fingerprint-images", formData);
+                            if (response.IsSuccessStatusCode)
+                            {
+                                Console.WriteLine("Image uploaded successfully.");
+                                string responseContent = await response.Content.ReadAsStringAsync();
+                                Console.WriteLine("Response content:");
+                                Console.WriteLine(responseContent);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Failed to upload image. Status code: " + response.StatusCode);
+                                string responseContent = await response.Content.ReadAsStringAsync();
+                                Console.WriteLine("Response content:");
+                                Console.WriteLine(responseContent);
+                            }
+                        }
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    Console.WriteLine("HTTP request failed: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("An error occurred: " + ex.Message);
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
         }
 
         private void doneButton_Click(object sender, EventArgs e)
         {
-
             this.Invoke((MethodInvoker)delegate
             {
                 this.Close();

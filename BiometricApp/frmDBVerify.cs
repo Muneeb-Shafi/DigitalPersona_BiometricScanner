@@ -19,6 +19,7 @@ using System.Net.Sockets;
 using System.Net.WebSockets;
 using MySqlConnector;
 using Org.BouncyCastle.Asn1.Cms;
+using Fleck;
 
 
 namespace BiometricApp
@@ -32,16 +33,12 @@ namespace BiometricApp
         public frmDBVerify()
         {
             InitializeComponent();
-            this.panel1.Visible = false;
             this.cboReaders.Visible = false;
         }
         public frmDBVerify(int id)
         {
             InitializeComponent();
-            this.panel1.Visible = false;
             this.cboReaders.Visible = false;
-            this.label7.Text = id.ToString();
-
         }
         private Reader currentReader;
         public Reader CurrentReader
@@ -54,6 +51,28 @@ namespace BiometricApp
             }
         }
         private ReaderCollection _readers;
+        public Dictionary<int, Fmd> Fmds
+        {
+            get { return fmds; }
+            set { fmds = value; }
+        }
+        private Dictionary<int, Fmd> fmds = new Dictionary<int, Fmd>();
+
+
+        public bool Reset
+        {
+            get { return reset; }
+            set { reset = value; }
+        }
+        private bool reset;
+        private bool sendData;
+
+        private enum Action
+        {
+            UpdateReaderState,
+            SendBitmap,
+            SendMessage
+        }
         private void LoadScanners()
         {
             cboReaders.Text = string.Empty;
@@ -280,7 +299,8 @@ namespace BiometricApp
                         MySqlConnection conn = new MySqlConnection("server=127.0.0.1;user=root;database=wapda_3.0;port=3306;password=");
                         conn.Close();
                         conn.Open();
-                        MySqlDataAdapter cmd = new MySqlDataAdapter("Select * from  person_fingers", conn);
+                        //MySqlDataAdapter cmd = new MySqlDataAdapter("Select * from  person_fingers", conn);
+                        MySqlDataAdapter cmd = new MySqlDataAdapter("Select * from  person_identifications", conn);
                         DataTable dt = new DataTable();
                         cmd.Fill(dt);
                         conn.Close();
@@ -308,7 +328,7 @@ namespace BiometricApp
                                     scannedUser = lstledgerIds[i].ToString();
                                     count++;
                                     changeAlert("Scan Successful", "Green");
-                                    fetchUserData();
+                                    sendData = true;
                                     socketConnection();
                                     break;
                                 }
@@ -318,7 +338,6 @@ namespace BiometricApp
                             {
                                 SendMessage(Action.SendMessage, "Fingerprint not registered.");
                                 changeAlert("No Match, Try Again", "Red");
-                                resetUserFields();
                             }
 
                         }
@@ -347,28 +366,7 @@ namespace BiometricApp
             }
         }
 
-        public Dictionary<int, Fmd> Fmds
-        {
-            get { return fmds; }
-            set { fmds = value; }
-        }
-        private Dictionary<int, Fmd> fmds = new Dictionary<int, Fmd>();
-
-
-        public bool Reset
-        {
-            get { return reset; }
-            set { reset = value; }
-        }
-        private bool reset;
-
-
-        private enum Action
-        {
-            UpdateReaderState,
-            SendBitmap,
-            SendMessage
-        }
+        
         private delegate void SendMessageCallback(Action state, object payload);
         private void SendMessage(Action action, object payload)
         {
@@ -440,111 +438,40 @@ namespace BiometricApp
 
         private void socketConnection()
         {
-            try
+            var server = new WebSocketServer("ws://0.0.0.0:8181");
+            var allSockets = new List<IWebSocketConnection>();
+            server.Start(socket =>
             {
-                Int32 port = 8000;
-                IPAddress localAddr = IPAddress.Parse("127.0.0.1");
+                socket.OnOpen = () =>
+                {
+                    Console.WriteLine("Client connected!");
+                    allSockets.Add(socket);
+                    var timer = new System.Threading.Timer(state =>
+                    {
+                        if (socket.IsAvailable && sendData == true) // Check if the socket is still open
+                        {
+                            socket.Send($"Code:1 , Data:{matchId}");
+                        }
+                    }, null, TimeSpan.Zero, TimeSpan.FromSeconds(2));
+                };
 
-                server = new TcpListener(localAddr, port);
-                server.Start();
-                Console.WriteLine("Socket Listening at " + localAddr.ToString() + ":" + port);
-                Byte[] bytes = new Byte[256];
+                socket.OnClose = () =>
+                {
+                    Console.WriteLine("Client disconnected!");
+                    allSockets.Remove(socket);
+                };
+            });
 
-                Console.Write("Waiting for a connection... ");
-
-                TcpClient client = server.AcceptTcpClient();
-                Console.WriteLine("Connected!");
-
-                NetworkStream stream = client.GetStream();
-
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(scannedUser);
-
-                stream.Write(msg, 0, msg.Length);
-                Console.WriteLine("Sent: {0}", scannedUser);
-
-                client.Close();
-
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException: {0}", e);
-            }
-            finally
-            {
-                // Stop listening for new clients.
-                server.Stop();
-                Thread.Sleep(2000);
-                System.Windows.Forms.Application.Exit();
-            }
+            Console.WriteLine("WebSocket server started. Press any key to exit.");
+            //Console.ReadKey();
+            //server.Dispose();
 
         }
 
         private void fetchUserData()
         {
-            try
-            {
-                MySqlConnection conn = new MySqlConnection("server=127.0.0.1;user=root;database=wapda_3.0;port=3306;password=");
-                conn.Close();
-                conn.Open();
-                MySqlDataAdapter cmd = new MySqlDataAdapter("Select * from  persons where user_id = '" + matchId.ToString() + "'", conn);
-                DataTable dt = new DataTable();
-                cmd.Fill(dt);
-                conn.Close();
-
-                label2.Invoke((MethodInvoker)delegate{
-                    label2.Text = dt.Rows[0]["person_first_name_en"].ToString() + " " + dt.Rows[0]["person_last_name_en"].ToString();
-                }); label3.Invoke((MethodInvoker)delegate{
-                    label3.Text = dt.Rows[0]["contact_cell_1"].ToString();
-                });label4.Invoke((MethodInvoker)delegate{
-                    label4.Text = dt.Rows[0]["person_cnic"].ToString();
-                });label5.Invoke((MethodInvoker)delegate{
-                    label5.Text = dt.Rows[0]["per_linear_address"].ToString();
-                });label8.Invoke((MethodInvoker)delegate{
-                    label8.Text = dt.Rows[0]["user_id"].ToString();
-                }); panel1.Invoke((MethodInvoker)delegate{
-                    this.panel1.Visible = true;
-                });
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(Text, e.Message);
-            }
+            
         }
 
-
-        public void resetUserFields()
-        {
-            label2.Invoke((MethodInvoker)delegate {
-                label2.Text = "";
-            }); label3.Invoke((MethodInvoker)delegate {
-                label3.Text = "";
-            }); label4.Invoke((MethodInvoker)delegate {
-                label4.Text = "";
-            }); label5.Invoke((MethodInvoker)delegate {
-                label5.Text = "";
-            }); label8.Invoke((MethodInvoker)delegate {
-                label8.Text = "";
-            }); panel1.Invoke((MethodInvoker)delegate {
-                this.panel1.Visible = false;
-            });
-        }
-
-        private void cboReaders_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pbFingerprint_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnBack_Click(object sender, EventArgs e)
-        {
-            this.Invoke((MethodInvoker)delegate
-            {
-                this.Close();
-            });
-        }
     }
 }

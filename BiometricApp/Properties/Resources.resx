@@ -118,6 +118,24 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="left_hand_8" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\left_hand_8.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="right_hand_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\right_hand_4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pngtree-man-avatar-wearing-gray-suit-png-image_6102786" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pngtree-man-avatar-wearing-gray-suit-png-image_6102786.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="left_hand_10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\left_hand_10.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="right_hand_21" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\right_hand_21.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="left_hand_61" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\left_hand_61.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="left_hand_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\left_hand_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -127,10 +145,19 @@
   <data name="left_hand_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\left_hand_7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="left_hand_9" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\left_hand_9.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="right_hand_11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\right_hand_11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="right_hand_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\right_hand_1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="pngtree-man-avatar-wearing-gray-suit-png-image_6102786" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pngtree-man-avatar-wearing-gray-suit-png-image_6102786.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="right_hand_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\right_hand_3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="right_hand_5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\right_hand_5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

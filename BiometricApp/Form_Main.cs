@@ -57,7 +57,7 @@ namespace UareUSampleCSharp
 
         private void btnReaderSelect_Click(System.Object sender, System.EventArgs e)
         {
-            frmDBEnrollment form = new frmDBEnrollment();
+            registerUser form = new registerUser();
             form.ShowDialog();
         }
 

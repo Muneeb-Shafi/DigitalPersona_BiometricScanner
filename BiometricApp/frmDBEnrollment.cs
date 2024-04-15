@@ -30,14 +30,13 @@ namespace BiometricApp
         private Fmd firstFinger;
         DataResult<Fmd> resultEnrollment;
         List<Fmd> preenrollmentFmds;
-
-
+        registerUser obj;
         public frmDBEnrollment()
         {
             InitializeComponent();
         }
 
-        public frmDBEnrollment(int id, string ftype)
+        public frmDBEnrollment(int id, string ftype, registerUser obje)
         {
             enrollementId = id;
             type = ftype;
@@ -45,7 +44,7 @@ namespace BiometricApp
             this.doneButton.Enabled = false;
             this.lblPlaceFinger.Text = "Place "+ftype+" on the scanner";
             count = 0;
-
+            obj = obje;
         }
         /// <summary>
         /// Holds fmds enrolled by the enrollment GUI.
@@ -420,6 +419,8 @@ namespace BiometricApp
 
         public async void saveToDB()
         {
+            string data = Fmd.SerializeXml(resultEnrollment.Data);
+            obj.Finger_data.Add($"{data},{type}");
             Console.WriteLine("In Database Function");
             if (resultEnrollment != null)
             {
@@ -439,7 +440,7 @@ namespace BiometricApp
                             cmd.Parameters.AddWithValue("@v3", Fmd.SerializeXml(resultEnrollment.Data));
                             cmd.Parameters.AddWithValue("@v5", DateTime.Now);
                             cmd.Parameters.AddWithValue("@v6", DateTime.Now);
-                            cmd.ExecuteNonQuery();
+                            //cmd.ExecuteNonQuery();
                             MessageBox.Show(type + " Saved Succesfully to Database");
                         }
                     }

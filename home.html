@@ -10,8 +10,10 @@
 <div id="messages"></div>
 
 <script>
+var out_data = [];
+
 // Create a WebSocket connection
-const socket = new WebSocket('ws://localhost:8181');
+const socket = new WebSocket('ws://localhost:8111');
 
 // When the connection is opened
 socket.onopen = function(event) {
@@ -26,13 +28,14 @@ socket.onerror = function(error) {
 
 // When a message is received from the server
 socket.onmessage = function(event) {
-    console.log('Message from server:', event.data);
-
-    // Append received message to the HTML
     const messagesDiv = document.getElementById('messages');
-    messagesDiv.innerHTML += '<p>' + event.data + '</p>';
-    socket.close();
+    out_data.push( event.data);
 };
+
+
+socket.onclose = function(event){
+    console.log(out_data);
+}
 
 // Close the WebSocket connection when the window is closed
 window.onbeforeunload = function() {

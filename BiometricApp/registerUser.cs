@@ -23,6 +23,7 @@ namespace BiometricApp
         string socket_response;
         bool sendData;
         int count;
+        public List<string> Finger_data;
         public registerUser(int E_id)
         {
             id = E_id;
@@ -34,7 +35,7 @@ namespace BiometricApp
             socket_response = "Code:-1, Data:null";
             sendData = false;
             socketConnection();
-
+            Finger_data = new List<string>();
         }
         public registerUser()
         {
@@ -53,6 +54,7 @@ namespace BiometricApp
                 conn.Close();
                 conn.Open();
                 MySqlDataAdapter cmd = new MySqlDataAdapter("Select * from  person_identifications where person_id = '" + id.ToString() + "'", conn);
+                //MySqlDataAdapter cmd = new MySqlDataAdapter("Select * from  person_fingers where person_id = '" + id.ToString() + "'", conn);
                 DataTable dt = new DataTable();
                 cmd.Fill(dt);
                 conn.Close();
@@ -134,7 +136,7 @@ namespace BiometricApp
 
         public void socketConnection()
         {
-            var server = new WebSocketServer("ws://0.0.0.0:8181");
+            var server = new WebSocketServer("ws://0.0.0.0:8111");
             var allSockets = new List<IWebSocketConnection>();
             server.Start(socket =>
             {
@@ -146,7 +148,15 @@ namespace BiometricApp
                     {
                         if (socket.IsAvailable && sendData == true) // Check if the socket is still open
                         {
-                            socket.Send($"Code:1 , Data:{id}, Count:{count}");
+                            string results = "Data: ";
+                            foreach (var s in Finger_data)
+                            {
+                                string result = string.Join("", $"[\n{s}\n],");
+                                results = string.Join("\n", results, result);
+                                //socket.Send($"{id},{s}");
+                                socket.Send($"{id}");
+                            }
+                            socket.Close();                           
                         }
                     }, null, TimeSpan.Zero, TimeSpan.FromSeconds(2));
                 };
@@ -168,70 +178,70 @@ namespace BiometricApp
         private void lthumbbtn_Click(object sender, EventArgs e)
         {
             lthumbbtn.Enabled = false;
-            frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Thumb");
+            frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Thumb", this);
             frm.ShowDialog();
         }
 
         private void rindexbtn_click(object sender, EventArgs e)
         {
             rindexbtn.Enabled = false;
-            frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Index");
+            frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Index", this);
             frm.ShowDialog();
         }
 
         private void leftindexButton_Click_1(object sender, EventArgs e)
         {
             leftindexButton.Enabled = false;
-            frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Index");
+            frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Index", this);
             frm.ShowDialog();
         }
 
         private void lmiddlebtn_Click(object sender, EventArgs e)
         {
             lmiddlebtn.Enabled = false;
-            frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Middle");
+            frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Middle", this);
             frm.ShowDialog();
         }
 
         private void lringbtn_Click(object sender, EventArgs e)
         {
             lringbtn.Enabled = false;
-            frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Ring");
+            frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Ring" , this);
             frm.ShowDialog();
         }
 
         private void lpinkybtn_Click(object sender, EventArgs e)
         {
             lpinkybtn.Enabled = false;
-            frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Pinky");
+            frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Pinky", this);
             frm.ShowDialog();
         }
 
         private void rthumbbtn_Click(object sender, EventArgs e)
         {
             rthumbbtn.Enabled = false;
-            frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Thumb");
+            frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Thumb" , this);
             frm.ShowDialog();
         }
 
         private void rmiddlebtn_Click(object sender, EventArgs e)
         {
             rmiddlebtn.Enabled = false;
-            frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Middle");
+            frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Middle" , this);
             frm.ShowDialog();
         }
 
         private void rringbtn_Click(object sender, EventArgs e)
         {
             rringbtn.Enabled = false;
-            frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Ring");
+            frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Ring" , this);
             frm.ShowDialog();
         }
 
         private void rpinkybtn_Click(object sender, EventArgs e)
         {
             rpinkybtn.Enabled = false;
-            frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Pinky");
+            frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Pinky" , this);
             frm.ShowDialog();
         }
 

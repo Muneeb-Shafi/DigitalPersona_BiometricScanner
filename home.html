@@ -11,9 +11,10 @@
 
 <script>
 var out_data = [];
-
+mySock();
 // Create a WebSocket connection
-const socket = new WebSocket('ws://localhost:8111');
+function mySock(){
+    const socket = new WebSocket('ws://localhost:8111');
 
 // When the connection is opened
 socket.onopen = function(event) {
@@ -22,7 +23,8 @@ socket.onopen = function(event) {
 
 // Log errors
 socket.onerror = function(error) {
-    console.error('WebSocket Error:', error);
+    socket.close();
+    mySock();
     
 };
 
@@ -35,12 +37,14 @@ socket.onmessage = function(event) {
 
 socket.onclose = function(event){
     console.log(out_data);
-}
-
+};
 // Close the WebSocket connection when the window is closed
 window.onbeforeunload = function() {
     socket.close();
 };
+}
+
+
 </script>
 </body>
 </html>

@@ -31,6 +31,7 @@ namespace BiometricApp
         DataResult<Fmd> resultEnrollment;
         List<Fmd> preenrollmentFmds;
         registerUser obj;
+        object ssender; EventArgs ee;
         public frmDBEnrollment()
         {
             InitializeComponent();
@@ -42,13 +43,11 @@ namespace BiometricApp
             type = ftype;
             InitializeComponent();
             this.doneButton.Enabled = false;
-            this.lblPlaceFinger.Text = "Place "+ftype+" on the scanner";
+            this.lblPlaceFinger.Text = $"Scan {ftype}";
             count = 0;
             obj = obje;
         }
-        /// <summary>
-        /// Holds fmds enrolled by the enrollment GUI.
-        /// </summary>
+
         public Dictionary<int, Fmd> Fmds
         {
             get { return fmds; }
@@ -56,9 +55,6 @@ namespace BiometricApp
         }
         private Dictionary<int, Fmd> fmds = new Dictionary<int, Fmd>();
 
-        /// <summary>
-        /// Reset the UI causing the user to reselect a reader.
-        /// </summary>
         public bool Reset
         {
             get { return reset; }
@@ -105,11 +101,6 @@ namespace BiometricApp
 
         private Reader _reader;
 
-        /// <summary>
-        /// Hookup capture handler and start capture.
-        /// </summary>
-        /// <param name="OnCaptured">Delegate to hookup as handler of the On_Captured event</param>
-        /// <returns>Returns true if successful; false if unsuccessful</returns>
         public bool StartCaptureAsync(Reader.CaptureCallback OnCaptured)
         {
             using (Tracer tracer = new Tracer("Form_Main::StartCaptureAsync"))
@@ -126,10 +117,7 @@ namespace BiometricApp
                 return true;
             }
         }
-        /// <summary>
-        /// Check the device status before starting capture.
-        /// </summary>
-        /// <returns></returns>
+
         public void GetStatus()
         {
             using (Tracer tracer = new Tracer("Form_Main::GetStatus"))
@@ -156,11 +144,6 @@ namespace BiometricApp
                 }
             }
         }
-        /// <summary>
-        /// Function to capture a finger. Always get status first and calibrate or wait if necessary.  Always check status and capture errors.
-        /// </summary>
-        /// <param name="fid"></param>
-        /// <returns></returns>
         public bool CaptureFingerAsync()
         {
             using (Tracer tracer = new Tracer("Form_Main::CaptureFingerAsync"))
@@ -185,10 +168,7 @@ namespace BiometricApp
                 }
             }
         }
-        /// <summary>
-        /// Cancel the capture and then close the reader.
-        /// </summary>
-        /// <param name="OnCaptured">Delegate to unhook as handler of the On_Captured event </param>
+       
         public void CancelCaptureAndCloseReader(Reader.CaptureCallback OnCaptured)
         {
             using (Tracer tracer = new Tracer("Form_Main::CancelCaptureAndCloseReader"))
@@ -197,7 +177,6 @@ namespace BiometricApp
                 {
                     currentReader.CancelCapture();
 
-                    // Dispose of reader handle and unhook reader events.
                     currentReader.Dispose();
 
                     if (reset)
@@ -207,7 +186,6 @@ namespace BiometricApp
                 }
             }
         }
-        // When set by child forms, shows s/n and enables buttons.
         private Reader currentReader;
         public Reader CurrentReader
         {
@@ -231,7 +209,9 @@ namespace BiometricApp
 
                 foreach (Reader Reader in _readers)
                 {
-                    cboReaders.Items.Add(Reader.Description.Name);
+                    int indexOfPlus = Reader.Description.Id.ToString().IndexOf('+');
+                    string extractedString = Reader.Description.Id.ToString().Substring(0, indexOfPlus);
+                    cboReaders.Items.Add(extractedString);
                 }
 
                 if (cboReaders.Items.Count > 0)
@@ -245,7 +225,6 @@ namespace BiometricApp
             }
             catch (Exception ex)
             {
-                //message box:
                 String text = ex.Message;
                 text += "\r\n\r\nPlease check if DigitalPersona service has been started";
                 String caption = "Cannot access readers";
@@ -255,6 +234,8 @@ namespace BiometricApp
         private void frmDBEnrollment_Load(object sender, EventArgs e)
         {
             // Reset variables
+            this.ssender = sender;
+            this.ee = e;
             LoadScanners();
             firstFinger = null;
             resultEnrollment = null;
@@ -273,8 +254,6 @@ namespace BiometricApp
             if (!StartCaptureAsync(this.OnCaptured))
             {
             }
-
-
 
         }
 
@@ -326,7 +305,10 @@ namespace BiometricApp
 
         public void OnCaptured(CaptureResult captureResult)
         {
-            if(count == 4) { return; }
+            if (count == 4)
+            {
+                return;
+            }
 
             try
             {
@@ -355,16 +337,18 @@ namespace BiometricApp
 
                     if (count == 4)
                     {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            doneButton.Enabled = true;
+                            lblPlaceFinger.ForeColor = Color.Blue;
+                            lblPlaceFinger.Text = "SCAN DONE!";
+                        });
                         resultEnrollment = DPUruNet.Enrollment.CreateEnrollmentFmd(Constants.Formats.Fmd.ANSI, preenrollmentFmds);
 
                         if (resultEnrollment.ResultCode == Constants.ResultCode.DP_SUCCESS)
                         {
                             preenrollmentFmds.Clear();
                             saveToDB();
-                            doneButton.Invoke((MethodInvoker)delegate
-                            {
-                                doneButton.Enabled = true;
-                            });
                             return;
                         }
                         else if (resultEnrollment.ResultCode == Constants.ResultCode.DP_ENROLLMENT_INVALID_SET)
@@ -420,38 +404,10 @@ namespace BiometricApp
         public async void saveToDB()
         {
             string data = Fmd.SerializeXml(resultEnrollment.Data);
-            obj.Finger_data.Add($"{data},{type}");
-            Console.WriteLine("In Database Function");
             if (resultEnrollment != null)
             {
-                try
-                {
-                    using (MySqlConnection conn = new MySqlConnection("server=127.0.0.1;user=root;database=wapda_3.0;port=3306;password="))
-                    {
-                        conn.Open();
-
-                        //string sql = "INSERT INTO person_fingers (person_id, type, code, created_at, updated_at) VALUES (@v1, @v2, @v3, @v5, @v6)";
-                        string sql = "INSERT INTO person_identifications (person_id, type, code, created_at, updated_at) VALUES (@v1, @v2, @v3, @v5, @v6)";
-
-                        using (MySqlCommand cmd = new MySqlCommand(sql, conn))
-                        {
-                            cmd.Parameters.AddWithValue("@v1", enrollementId);
-                            cmd.Parameters.AddWithValue("@v2", type);
-                            cmd.Parameters.AddWithValue("@v3", Fmd.SerializeXml(resultEnrollment.Data));
-                            cmd.Parameters.AddWithValue("@v5", DateTime.Now);
-                            cmd.Parameters.AddWithValue("@v6", DateTime.Now);
-                            //cmd.ExecuteNonQuery();
-                            MessageBox.Show(type + " Saved Succesfully to Database");
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message.ToString());
-                    MessageBox.Show("Error While Inserting Data in Database Error: " + ex.Message);
-                }
+                obj.Finger_data.Add($"{data},{type}");              
             }
-            Console.WriteLine(type);
             try
             {
 
@@ -465,7 +421,6 @@ namespace BiometricApp
                     imageData = Convert.ToBase64String(imageBytes);
                 }
                 string fileName = $"{enrollementId}_{type}";
-
                 try
                 {
                     using (var httpClient = new HttpClient())
@@ -502,9 +457,6 @@ namespace BiometricApp
                 {
                     Console.WriteLine("An error occurred: " + ex.Message);
                 }
-
-
-
             }
             catch (Exception ex)
             {

@@ -20,10 +20,9 @@ namespace BiometricApp
     public partial class registerUser : Form
     {
         public int id;
-        string socket_response;
-        bool sendData;
-        int count;
         public List<string> Finger_data;
+        bool sendData;
+        int count;       
         public registerUser(int E_id)
         {
             id = E_id;
@@ -32,17 +31,13 @@ namespace BiometricApp
             button1.Enabled = false;
             timer1.Tick += new EventHandler(timer1_Tick);
             timer1.Start();
-            socket_response = "Code:-1, Data:null";
             sendData = false;
-            socketConnection();
             Finger_data = new List<string>();
         }
         public registerUser()
         {
             InitializeComponent();
-            socket_response = "Code:-1, Data:null";
             sendData = false;
-            socketConnection();
         }
 
 
@@ -124,6 +119,7 @@ namespace BiometricApp
         {
             MessageBox.Show("All Required FingerPrints are Saved");
             sendData = true;
+            socketConnection();
             MessageBox.Show("Closing in 5 Secs");
             Thread.Sleep(5000);
             this.Close();
@@ -153,8 +149,8 @@ namespace BiometricApp
                             {
                                 string result = string.Join("", $"[\n{s}\n],");
                                 results = string.Join("\n", results, result);
-                                //socket.Send($"{id},{s}");
-                                socket.Send($"{id}");
+                                socket.Send($"{s}");
+                                //socket.Send($"{id}");
                             }
                             socket.Close();                           
                         }
@@ -180,6 +176,7 @@ namespace BiometricApp
             lthumbbtn.Enabled = false;
             frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Thumb", this);
             frm.ShowDialog();
+
         }
 
         private void rindexbtn_click(object sender, EventArgs e)

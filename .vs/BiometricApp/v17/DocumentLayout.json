@@ -3,10 +3,6 @@
   "WorkspaceRootPath": "C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|c:\\users\\admin\\documents\\github\\digitalpersona_biometricscanner\\biometricapp\\registeruser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|solutionrelative:biometricapp\\registeruser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\biometricapp\\frmdbenrollment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|solutionrelative:biometricapp\\frmdbenrollment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -15,12 +11,16 @@
       "RelativeMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|solutionrelative:biometricapp\\frmdbenrollment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\biometricapp\\registeruser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|solutionrelative:biometricapp\\registeruser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|c:\\users\\admin\\documents\\github\\digitalpersona_biometricscanner\\biometricapp\\registeruser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|solutionrelative:biometricapp\\registeruser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\biometricapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|solutionrelative:biometricapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\biometricapp\\registeruser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|solutionrelative:biometricapp\\registeruser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2D24CB66-EF25-4C7F-872A-DC5C975857B7}|BiometricApp\\BiometricApp.csproj|C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\biometricapp\\frmdbverify.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -38,7 +38,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
@@ -65,55 +65,58 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\BiometricApp\\Program.cs",
               "RelativeDocumentMoniker": "BiometricApp\\Program.cs",
               "ToolTip": "C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\BiometricApp\\Program.cs",
               "RelativeToolTip": "BiometricApp\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAAlAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABwAAAAUAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-03T12:17:56.554Z"
+              "WhenOpened": "2024-04-03T12:17:56.554Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "frmDBEnrollment.cs",
               "DocumentMoniker": "C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\BiometricApp\\frmDBEnrollment.cs",
               "RelativeDocumentMoniker": "BiometricApp\\frmDBEnrollment.cs",
               "ToolTip": "C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\BiometricApp\\frmDBEnrollment.cs",
               "RelativeToolTip": "BiometricApp\\frmDBEnrollment.cs",
-              "ViewState": "AQIAAJcBAAAAAAAAAAASwKYBAAAiAAAA",
+              "ViewState": "AQIAAEgBAAAAAAAAAAAAAFYBAABBAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-03T10:42:44.134Z"
+              "WhenOpened": "2024-04-03T10:42:44.134Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "frmDBEnrollment.cs [Design]",
               "DocumentMoniker": "C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\BiometricApp\\frmDBEnrollment.cs",
               "RelativeDocumentMoniker": "BiometricApp\\frmDBEnrollment.cs",
               "ToolTip": "C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\BiometricApp\\frmDBEnrollment.cs [Design]",
               "RelativeToolTip": "BiometricApp\\frmDBEnrollment.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-03T10:42:42.1Z"
+              "WhenOpened": "2024-04-03T10:42:42.1Z",
+              "EditorCaption": " [Design]"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "registerUser.cs",
               "DocumentMoniker": "C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\BiometricApp\\registerUser.cs",
               "RelativeDocumentMoniker": "BiometricApp\\registerUser.cs",
               "ToolTip": "C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\BiometricApp\\registerUser.cs",
               "RelativeToolTip": "BiometricApp\\registerUser.cs",
-              "ViewState": "AQIAAHsAAAAAAAAAAAAgwIoAAAA+AAAA",
+              "ViewState": "AQIAAA0AAAAAAAAAAAAAABUAAAAWAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-03T10:40:38.347Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "registerUser.cs [Design]",
               "DocumentMoniker": "C:\\Users\\ADMIN\\Documents\\GitHub\\DigitalPersona_BiometricScanner\\BiometricApp\\registerUser.cs",
               "RelativeDocumentMoniker": "BiometricApp\\registerUser.cs",

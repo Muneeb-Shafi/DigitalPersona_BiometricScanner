@@ -12,6 +12,12 @@
 <script>
 var out_data = [];
 mySock();
+// sleep time expects milliseconds
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+
 // Create a WebSocket connection
 function mySock(){
     const socket = new WebSocket('ws://localhost:8111');
@@ -24,7 +30,9 @@ socket.onopen = function(event) {
 // Log errors
 socket.onerror = function(error) {
     socket.close();
-    mySock();
+    sleep(2000).then(() => {
+        mySock();
+    });
     
 };
 

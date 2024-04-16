@@ -26,6 +26,7 @@ namespace BiometricApp
         public int enrollementId;
         public string type;
         int count;
+        public bool success;
         private const int PROBABILITY_ONE = 0x7fffffff;
         private Fmd firstFinger;
         DataResult<Fmd> resultEnrollment;
@@ -337,22 +338,26 @@ namespace BiometricApp
 
                     if (count == 4)
                     {
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            doneButton.Enabled = true;
-                            lblPlaceFinger.ForeColor = Color.Blue;
-                            lblPlaceFinger.Text = "SCAN DONE!";
-                        });
+                       
                         resultEnrollment = DPUruNet.Enrollment.CreateEnrollmentFmd(Constants.Formats.Fmd.ANSI, preenrollmentFmds);
 
                         if (resultEnrollment.ResultCode == Constants.ResultCode.DP_SUCCESS)
                         {
                             preenrollmentFmds.Clear();
                             saveToDB();
+                            success = true;
+                            this.Invoke((MethodInvoker)delegate
+                            {
+
+                                doneButton.Enabled = true;
+                                lblPlaceFinger.ForeColor = Color.Blue;
+                                lblPlaceFinger.Text = "SCAN DONE!";
+                            });
                             return;
                         }
-                        else if (resultEnrollment.ResultCode == Constants.ResultCode.DP_ENROLLMENT_INVALID_SET)
+                        else //if (resultEnrollment.ResultCode == Constants.ResultCode.DP_ENROLLMENT_INVALID_SET)
                         {
+                            success = false;
                             SendMessage(Action.SendMessage, "Enrollment was unsuccessful.  Please try again.");
                             preenrollmentFmds.Clear();
                             return;

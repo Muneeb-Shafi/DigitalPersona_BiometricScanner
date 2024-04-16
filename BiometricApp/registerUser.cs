@@ -40,6 +40,7 @@ namespace BiometricApp
             sendData = false;
         }
 
+        #region Database FP Data Check
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -114,21 +115,9 @@ namespace BiometricApp
             }
         }
 
+        #endregion
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("All Required FingerPrints are Saved");
-            sendData = true;
-            socketConnection();
-            MessageBox.Show("Closing in 5 Secs");
-            Thread.Sleep(5000);
-            this.Close();
-        }
-
-        private void btnBack_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        #region Socket Connection 
 
         public void socketConnection()
         {
@@ -144,13 +133,13 @@ namespace BiometricApp
                     {
                         if (socket.IsAvailable && sendData == true) // Check if the socket is still open
                         {
-                            string results = "Data: ";
-                            foreach (var s in Finger_data)
+                            if (Finger_data == null) { socket.Send("Null"); }
+                            else
                             {
-                                string result = string.Join("", $"[\n{s}\n],");
-                                results = string.Join("\n", results, result);
-                                socket.Send($"{s}");
-                                //socket.Send($"{id}");
+                                foreach (var s in Finger_data)
+                                {
+                                    socket.Send($"{s}");
+                                }
                             }
                             socket.Close();                           
                         }
@@ -165,81 +154,123 @@ namespace BiometricApp
             });
 
             Console.WriteLine("WebSocket server started. Press any key to exit.");
-            //Console.ReadKey();
-            //server.Dispose();
         }
+
+        #endregion
 
         #region btn calls for scans
 
         private void lthumbbtn_Click(object sender, EventArgs e)
         {
-            lthumbbtn.Enabled = false;
+            
             frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Thumb", this);
             frm.ShowDialog();
+            if(frm.success == true) { lthumbbtn.Enabled = false; }
 
         }
 
         private void rindexbtn_click(object sender, EventArgs e)
         {
-            rindexbtn.Enabled = false;
             frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Index", this);
             frm.ShowDialog();
+            if (frm.success == true) { rindexbtn.Enabled = false; }
+
         }
 
         private void leftindexButton_Click_1(object sender, EventArgs e)
         {
-            leftindexButton.Enabled = false;
             frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Index", this);
             frm.ShowDialog();
+            if (frm.success == true) { leftindexButton.Enabled = false; }
+
         }
 
         private void lmiddlebtn_Click(object sender, EventArgs e)
         {
-            lmiddlebtn.Enabled = false;
             frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Middle", this);
             frm.ShowDialog();
+            if (frm.success == true) { lmiddlebtn.Enabled = false; }
+
         }
 
         private void lringbtn_Click(object sender, EventArgs e)
         {
-            lringbtn.Enabled = false;
             frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Ring" , this);
             frm.ShowDialog();
+            if (frm.success == true) { lringbtn.Enabled = false; }
+
         }
 
         private void lpinkybtn_Click(object sender, EventArgs e)
         {
-            lpinkybtn.Enabled = false;
             frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Pinky", this);
             frm.ShowDialog();
+            if (frm.success == true) { lpinkybtn.Enabled = false; }
+
         }
 
         private void rthumbbtn_Click(object sender, EventArgs e)
         {
-            rthumbbtn.Enabled = false;
             frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Thumb" , this);
             frm.ShowDialog();
+            if (frm.success == true) { rthumbbtn.Enabled = false; }
+
         }
 
         private void rmiddlebtn_Click(object sender, EventArgs e)
         {
-            rmiddlebtn.Enabled = false;
             frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Middle" , this);
             frm.ShowDialog();
+            if (frm.success == true) { rmiddlebtn.Enabled = false; }
+
         }
 
         private void rringbtn_Click(object sender, EventArgs e)
         {
-            rringbtn.Enabled = false;
             frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Ring" , this);
             frm.ShowDialog();
+            if (frm.success == true) { rringbtn.Enabled = false; }
+
         }
 
         private void rpinkybtn_Click(object sender, EventArgs e)
         {
-            rpinkybtn.Enabled = false;
             frmDBEnrollment frm = new frmDBEnrollment(id, "Right_Pinky" , this);
             frm.ShowDialog();
+            if (frm.success == true) { rpinkybtn.Enabled = false; }
+
+        }
+
+        #endregion
+
+        #region Bottom Buttons
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("All Required FingerPrints are Saved");
+            sendData = true;
+            socketConnection();
+            MessageBox.Show("Closing in 5 Secs");
+            Thread.Sleep(5000);
+            this.Close();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogResult = MessageBox.Show("All FingerPrint Data Will Be Lost", "Are You Sure", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                sendData = true;
+                Finger_data = null;
+                socketConnection();
+                Thread.Sleep(5000);
+                this.Close();
+            }
+            else if (dialogResult == DialogResult.No)
+            {
+                return;
+            }
+            
         }
 
         #endregion

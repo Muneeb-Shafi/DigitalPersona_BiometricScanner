@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BiometricApp.exe" size="622592">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BiometricApp.exe" size="620032">
       <assemblyIdentity name="BiometricApp" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>3ay6iwcg1xA7Y8f3yrs038bCEprTJpUa+6W6Bhv45Nw=</dsig:DigestValue>
+        <dsig:DigestValue>YicrRp7xlrelWHwRrFqQOPjmlBXlLX8l8+KVHtzpP/4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

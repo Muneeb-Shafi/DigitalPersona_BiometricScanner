@@ -1,19 +1,16 @@
-﻿using DPUruNet;
-using MySqlConnector;
+﻿using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Net;
-using WebSocketSharp;
 using Fleck;
+using Org.BouncyCastle.Tls;
+using System.Linq;
+using System.Runtime.Remoting.Contexts;
+using WebSocketSharp.Server;
+using WebSocketSharp;
+
 
 namespace BiometricApp
 {
@@ -22,7 +19,8 @@ namespace BiometricApp
         public int id;
         public List<string> Finger_data;
         bool sendData;
-        int count;       
+        private static readonly object _lock = new object();
+
         public registerUser(int E_id)
         {
             id = E_id;
@@ -46,67 +44,70 @@ namespace BiometricApp
         {
             try
             {
-                MySqlConnection conn = new MySqlConnection("server=127.0.0.1;user=root;database=wapda_3.0;port=3306;password=");
-                conn.Close();
-                conn.Open();
-                MySqlDataAdapter cmd = new MySqlDataAdapter("Select * from  person_identifications where person_id = '" + id.ToString() + "'", conn);
-                //MySqlDataAdapter cmd = new MySqlDataAdapter("Select * from  person_fingers where person_id = '" + id.ToString() + "'", conn);
-                DataTable dt = new DataTable();
-                cmd.Fill(dt);
-                conn.Close();
+                //MySqlConnection conn = new MySqlConnection("server=127.0.0.1;user=root;database=wapda_3.0;port=3306;password=");
+                //conn.Close();
+                //conn.Open();
+                //MySqlDataAdapter cmd = new MySqlDataAdapter("Select * from  person_identifications where person_id = '" + id.ToString() + "'", conn);
+                ////MySqlDataAdapter cmd = new MySqlDataAdapter("Select * from  person_fingers where person_id = '" + id.ToString() + "'", conn);
+                //DataTable dt = new DataTable();
+                //cmd.Fill(dt);
+                //conn.Close();
 
-                foreach(DataRow dr in dt.Rows)
-                {
-                    string type = dr["type"].ToString();
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    string type = dr["type"].ToString();
 
-                    if (type == "Left_Thumb")
-                    {
-                        lthumbbtn.Enabled = false;
-                    }
-                    else if (type == "Left_Index")
-                    {
-                        leftindexButton.Enabled = false;
-                    }
-                    else if (type == "Left_Middle")
-                    {
-                        lmiddlebtn.Enabled = false;
-                    }
-                    else if (type == "Left_Ring")
-                    {
-                        lringbtn.Enabled = false;
-                    }
-                    else if (type == "Left_Pinky")
-                    {
-                        lpinkybtn.Enabled = false;
-                    }
-                    else if (type == "Right_Thumb")
-                    {
-                        rthumbbtn.Enabled = false;
-                    }
-                    else if (type == "Right_Index")
-                    {
-                        rindexbtn.Enabled = false;
-                    }
-                    else if (type == "Right_Middle")
-                    {
-                        rmiddlebtn.Enabled = false;
-                    }
-                    else if (type == "Right_Ring")
-                    {
-                        rringbtn.Enabled = false;
-                    }
-                    else if (type == "Right_Pinky")
-                    {
-                        rpinkybtn.Enabled = false;
-                    }
+                //    if (type == "Left_Thumb")
+                //    {
+                //        lthumbbtn.Enabled = false;
+                //    }
+                //    else if (type == "Left_Index")
+                //    {
+                //        leftindexButton.Enabled = false;
+                //    }
+                //    else if (type == "Left_Middle")
+                //    {
+                //        lmiddlebtn.Enabled = false;
+                //    }
+                //    else if (type == "Left_Ring")
+                //    {
+                //        lringbtn.Enabled = false;
+                //    }
+                //    else if (type == "Left_Pinky")
+                //    {
+                //        lpinkybtn.Enabled = false;
+                //    }
+                //    else if (type == "Right_Thumb")
+                //    {
+                //        rthumbbtn.Enabled = false;
+                //    }
+                //    else if (type == "Right_Index")
+                //    {
+                //        rindexbtn.Enabled = false;
+                //    }
+                //    else if (type == "Right_Middle")
+                //    {
+                //        rmiddlebtn.Enabled = false;
+                //    }
+                //    else if (type == "Right_Ring")
+                //    {
+                //        rringbtn.Enabled = false;
+                //    }
+                //    else if (type == "Right_Pinky")
+                //    {
+                //        rpinkybtn.Enabled = false;
+                //    }
 
 
 
-                }
-                count = dt.Rows.Count;  
-                printscount.Text = dt.Rows.Count.ToString();
+                //}
                 List<string> lstledgerIds = new List<string>();
                 button1.Enabled = true;
+                this.Invoke((MethodInvoker)delegate
+                {
+                    printscount.Text = Finger_data.Count.ToString();
+
+                });
 
             }
             catch (Exception ex)
@@ -121,7 +122,7 @@ namespace BiometricApp
 
         public void socketConnection()
         {
-            var server = new WebSocketServer("ws://0.0.0.0:8111");
+            var server = new Fleck.WebSocketServer("ws://0.0.0.0:8111");
             var allSockets = new List<IWebSocketConnection>();
             server.Start(socket =>
             {
@@ -129,21 +130,15 @@ namespace BiometricApp
                 {
                     Console.WriteLine("Client connected!");
                     allSockets.Add(socket);
-                    var timer = new System.Threading.Timer(state =>
+                    if (socket.IsAvailable && sendData == true) // Check if the socket is still open
                     {
-                        if (socket.IsAvailable && sendData == true) // Check if the socket is still open
+                        lock (_lock)
                         {
-                            if (Finger_data == null) { socket.Send("Null"); }
-                            else
-                            {
-                                foreach (var s in Finger_data)
-                                {
-                                    socket.Send($"{s}");
-                                }
-                            }
-                            socket.Close();                           
+                            // Ensure only one thread enters this block at a time
+                            SendData(socket, Finger_data);
                         }
-                    }, null, TimeSpan.Zero, TimeSpan.FromSeconds(2));
+                    }
+
                 };
 
                 socket.OnClose = () =>
@@ -156,11 +151,26 @@ namespace BiometricApp
             Console.WriteLine("WebSocket server started. Press any key to exit.");
         }
 
-        #endregion
+        public static void SendData(IWebSocketConnection socket, List<String> Finger_data)
+        {
+            if (Finger_data == null) { socket.Send("Null"); }
+            else
+            {
+                Console.WriteLine(Finger_data.Count);
+                foreach (var s in Finger_data)
+                {
+                    socket.Send($"{s}");
+                    Console.WriteLine(s);
+                }
+            }
+            socket.Close();
+        }
 
-        #region btn calls for scans
+            #endregion
 
-        private void lthumbbtn_Click(object sender, EventArgs e)
+            #region btn calls for scans
+
+            private void lthumbbtn_Click(object sender, EventArgs e)
         {
             
             frmDBEnrollment frm = new frmDBEnrollment(id, "Left_Thumb", this);
@@ -275,4 +285,6 @@ namespace BiometricApp
 
         #endregion
     }
+
+
 } 

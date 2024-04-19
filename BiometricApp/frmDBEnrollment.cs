@@ -165,6 +165,8 @@ namespace BiometricApp
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error:  " + ex.Message);
+                    doneButtonFailed();
+
                     return false;
                 }
             }
@@ -271,6 +273,8 @@ namespace BiometricApp
                 if (result != Constants.ResultCode.DP_SUCCESS)
                 {
                     MessageBox.Show("Error:  " + result);
+                    doneButtonFailed();
+
                     reset = true;
                     return false;
                 }
@@ -359,6 +363,8 @@ namespace BiometricApp
                         {
                             success = false;
                             SendMessage(Action.SendMessage, "Enrollment was unsuccessful.  Please try again.");
+                            doneButtonFailed();
+
                             preenrollmentFmds.Clear();
                             return;
                         }
@@ -367,11 +373,14 @@ namespace BiometricApp
                 catch (Exception ex)
                 {
                     SendMessage(Action.SendMessage, "Error:  " + ex.Message);
+                    doneButtonFailed();
                 }
             }
             catch (Exception ex)
             {
                 SendMessage(Action.SendMessage, "Error:  " + ex.Message);
+                doneButtonFailed();
+
             }
         }
         public Bitmap CreateBitmap(byte[] bytes, int width, int height)
@@ -411,63 +420,64 @@ namespace BiometricApp
             string data = Fmd.SerializeXml(resultEnrollment.Data);
             if (resultEnrollment != null)
             {
-                obj.Finger_data.Add($"{data},{type}");              
-            }
-            try
-            {
-
-                Image image = pbFingerprint.Image;
                 string imageData = null;
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    var raw = image.RawFormat;
-                    image.Save(memoryStream, ImageFormat.Png);
-                    byte[] imageBytes = memoryStream.ToArray();
-                    imageData = Convert.ToBase64String(imageBytes);
-                }
-                string fileName = $"{enrollementId}_{type}";
                 try
                 {
-                    using (var httpClient = new HttpClient())
+                    Image image = pbFingerprint.Image;
+                    using (MemoryStream memoryStream = new MemoryStream())
                     {
-                        using (var formData = new MultipartFormDataContent())
-                        {
-                            formData.Add(new StringContent(imageData), "image");
-                            formData.Add(new StringContent(fileName), "filename");
-                            formData.Add(new StringContent(type), "type");
-                            formData.Add(new StringContent($"{enrollementId}"), "hr_id");
-                            var response = await httpClient.PostAsync("http://wapda.test/save-fingerprint-images", formData);
-                            if (response.IsSuccessStatusCode)
-                            {
-                                Console.WriteLine("Image uploaded successfully.");
-                                string responseContent = await response.Content.ReadAsStringAsync();
-                                Console.WriteLine("Response content:");
-                                Console.WriteLine(responseContent);
-                            }
-                            else
-                            {
-                                Console.WriteLine("Failed to upload image. Status code: " + response.StatusCode);
-                                string responseContent = await response.Content.ReadAsStringAsync();
-                                Console.WriteLine("Response content:");
-                                Console.WriteLine(responseContent);
-                            }
-                        }
+                        var raw = image.RawFormat;
+                        image.Save(memoryStream, ImageFormat.Png);
+                        byte[] imageBytes = memoryStream.ToArray();
+                        imageData = Convert.ToBase64String(imageBytes);
+                        obj.Finger_data.Add($"{data},{type}, {imageData}");
+                        Console.WriteLine(obj.Finger_data.Last());
                     }
-                }
-                catch (HttpRequestException ex)
-                {
-                    Console.WriteLine("HTTP request failed: " + ex.Message);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("An error occurred: " + ex.Message);
+                    Console.WriteLine($"Error: {ex.Message}");
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-
+            
+                //try
+                //{
+                //    using (var httpClient = new HttpClient())
+                //    {
+                //        using (var formData = new MultipartFormDataContent())
+                //        {
+                //            formData.Add(new StringContent(imageData), "image");
+                //            formData.Add(new StringContent(fileName), "filename");
+                //            formData.Add(new StringContent(type), "type");
+                //            formData.Add(new StringContent($"{enrollementId}"), "hr_id");
+                //            var response = await httpClient.PostAsync("http://wapda.test/save-fingerprint-images", formData);
+                //            if (response.IsSuccessStatusCode)
+                //            {
+                //                Console.WriteLine("Image uploaded successfully.");
+                //                string responseContent = await response.Content.ReadAsStringAsync();
+                //                Console.WriteLine("Response content:");
+                //                Console.WriteLine(responseContent);
+                //            }
+                //            else
+                //            {
+                //                Console.WriteLine("Failed to upload image. Status code: " + response.StatusCode);
+                //                string responseContent = await response.Content.ReadAsStringAsync();
+                //                Console.WriteLine("Response content:");
+                //                Console.WriteLine(responseContent);
+                //            }
+                //        }
+                //    }
+                //}
+                //catch (HttpRequestException ex)
+                //{
+                //    Console.WriteLine("HTTP request failed: " + ex.Message);
+                //}
+                //catch (Exception ex)
+                //{
+                //    Console.WriteLine("An error occurred: " + ex.Message);
+                //}
+            
+          
         }
 
         private void doneButton_Click(object sender, EventArgs e)
@@ -475,6 +485,18 @@ namespace BiometricApp
             this.Invoke((MethodInvoker)delegate
             {
                 this.Close();
+            });
+        }
+
+        private void doneButtonFailed()
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                lblPlaceFinger.ForeColor = Color.Red;
+                lblPlaceFinger.Text = "SCAN Failed!";
+                doneButton.Text = "Try Again";
+                doneButton.BackColor = Color.Red;
+                doneButton.Enabled = true;
             });
         }
     }
